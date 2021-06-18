@@ -47,7 +47,7 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Redirect to other page after the login
-	http.Redirect(w, r, "/cookietest", http.StatusFound)
+	http.Redirect(w, r, "/login", http.StatusFound)
 }
 
 // Login is a POST /login endpoint
@@ -109,11 +109,12 @@ func (u *Users) CookieTest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	user, err := u.us.ByRemember(cookie.Value)
+	_, err = u.us.ByRemember(cookie.Value)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprintf(w, "The user is %+v", user)
+
+	// fmt.Fprintf(w, "The user is %+v", user)
 	//fmt.Fprintln(w, "Email is :", cookie.Value)
 }

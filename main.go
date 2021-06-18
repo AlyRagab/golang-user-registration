@@ -45,7 +45,7 @@ func main() {
 		panic(err)
 	}
 	defer us.Close()
-	//us.DBDestructiveReset()
+	us.DBDestructiveReset()
 
 	staticC := controllers.NewStatic() // Parsing static templates
 	usersC := controllers.NewUsers(us) // Handling User Controller
