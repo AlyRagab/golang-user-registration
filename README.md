@@ -20,4 +20,6 @@ make stop_local
 `http://localhost:8080/login` and `http://localhost:8080/signup`
 
 ### ToDo:
+- Adding Reset Password
+- Adding Logout
 - Separate Its frontend with `vuejs` framework
