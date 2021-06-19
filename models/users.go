@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/AlyRagab/golang-user-registration/modules/hash"
 
 	"github.com/jinzhu/gorm"
@@ -35,6 +37,14 @@ func newUserGorm(connectionInfo string) (*userGorm, error) {
 	return &userGorm{
 		db: db,
 	}, nil
+}
+
+func (ug *userGorm) Ping() error {
+	if err := ug.db.DB().Ping(); err != nil {
+		ug.db.DB().Close()
+		return errors.New("Connection to DB is not available")
+	}
+	return nil
 }
 
 // ByID method to get a user by ID

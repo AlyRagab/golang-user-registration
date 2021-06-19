@@ -75,7 +75,8 @@ func (u *Users) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Redirect to other page after the login
-	http.Redirect(w, r, "/cookietest", http.StatusFound)
+	fmt.Fprintf(w, "Login has been succeeded")
+	// http.Redirect(w, r, "/cookietest", http.StatusFound)
 }
 
 // signIn helps in setting the cookie "email" to the end user
@@ -109,12 +110,11 @@ func (u *Users) CookieTest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	_, err = u.us.ByRemember(cookie.Value)
+	user, err := u.us.ByRemember(cookie.Value)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	// fmt.Fprintf(w, "The user is %+v", user)
+	fmt.Fprintf(w, "The user is %+v", user)
 	//fmt.Fprintln(w, "Email is :", cookie.Value)
 }

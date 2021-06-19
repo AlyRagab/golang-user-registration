@@ -4,12 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/AlyRagab/golang-user-registration/controllers"
 	"github.com/AlyRagab/golang-user-registration/models"
-	"github.com/hellofresh/health-go/v4"
-	healthPg "github.com/hellofresh/health-go/v4/checks/postgres"
 
 	"github.com/gorilla/mux"
 )
@@ -51,8 +48,8 @@ func main() {
 	usersC := controllers.NewUsers(us) // Handling User Controller
 
 	r := mux.NewRouter()
-	r.Handle("/", staticC.Home).Methods("GET")
 	r.Handle("/contact", staticC.Contact).Methods("GET")
+	r.HandleFunc("/", usersC.New).Methods("GET")
 	r.HandleFunc("/signup", usersC.New).Methods("GET")
 	r.HandleFunc("/signup", usersC.Create).Methods("POST")
 	r.Handle("/login", usersC.LoginView).Methods("GET")
@@ -61,16 +58,25 @@ func main() {
 	r.NotFoundHandler = http.HandlerFunc(notfound)
 
 	// healthz endpoint
-	h, _ := health.New()
-	h.Register(health.Config{
-		Name:      "postgres-check",
-		Timeout:   time.Second * 5,
-		SkipOnErr: true,
-		Check: healthPg.New(healthPg.Config{
-			DSN: psqlInfo,
-		}),
+	// h, _ := health.New()
+	// h.Register(health.Config{
+	// 	Name:      "postgres-check",
+	// 	Timeout:   time.Second * 5,
+	// 	SkipOnErr: true,
+	// 	Check: healthPg.New(healthPg.Config{
+	// 		DSN: psqlInfo,
+	// 	}),
+	// })
+
+	r.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		err = us.Ping()
+		if err != nil {
+			fmt.Fprintf(w, "Not Healthy Response %d", http.StatusInternalServerError)
+			return
+		} else {
+			fmt.Fprintf(w, "Healthy Response %d", http.StatusOK)
+		}
 	})
-	r.Handle("/healthz", h.Handler())
 	fmt.Println("Starting Server on 0.0.0.0:8080")
 	http.ListenAndServe(":8080", r)
 }

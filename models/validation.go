@@ -20,7 +20,6 @@ func (uv *userValidator) Create(user *User) error {
 		uv.passwordHashRequired,
 		uv.setRememberIfUnset,
 		uv.hmacRememberToken,
-		//uv.emialIsExisted,
 		uv.normalizeEmail); err != nil {
 		return err
 	}
@@ -32,12 +31,9 @@ func (uv *userValidator) Create(user *User) error {
 func (uv *userValidator) Update(user *User) error {
 	// Validating and Normalizing then updating the hash
 	if err := runUserValFuncs(user,
-		uv.passwordRequired,
-		uv.passwordLength,
-		uv.bcryptPassword,
 		uv.passwordHashRequired,
 		uv.hmacRememberToken,
-		//uv.emialIsExisted,
+		uv.emialIsExisted,
 		uv.normalizeEmail); err != nil {
 		return err
 	}
@@ -164,9 +160,6 @@ func (uv *userValidator) bcryptPassword(user *User) error {
 
 // Validating the password length should be atleast 8 charachters
 func (uv *userValidator) passwordLength(user *User) error {
-	if user.Password == "" {
-		return nil
-	}
 	if len(user.Password) < 8 {
 		return errors.New("Passowrd should be atleast 8 char")
 	}
@@ -200,7 +193,7 @@ func (uv *userValidator) hmacRememberToken(user *User) error {
 // Validating if the user.ID is greater than 0
 func (uv *userValidator) isGreaterThan(n uint) userValFunc {
 	return userValFunc(func(user *User) error {
-		if user.ID <= n {
+		if user.ID > n {
 			return ErrInvalidID
 		}
 		return nil

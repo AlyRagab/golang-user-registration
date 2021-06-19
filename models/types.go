@@ -44,6 +44,9 @@ type UserDB interface {
 
 	// Migration Helpers
 	DBDestructiveReset()
+
+	// Handling Database Communication
+	Ping() error
 }
 
 // UserService interface is a ser of methods used to work with the user model
