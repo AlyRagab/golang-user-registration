@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Chart.Name }}"
+  labels:
+    app: "{{ .Chart.Name }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  selector:
+    matchLabels:
+      app: "{{ .Chart.Name }}"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+       maxUnavailable: {{ .Values.rollingUpdate.maxUnavailable }}
+       maxSurge: {{ .Values.rollingUpdate.maxSurge }}
+  revisionHistoryLimit: 10
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: "{{ .Chart.Name }}"
+    spec:
+      securityContext:
+        runAsUser: 1001
+        fsGroup: 1001
+      containers:
+        - name: "{{ .Chart.Name }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Chart.Name }}"
+                  key: DB_HOST
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Chart.Name }}"
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Chart.Name }}"
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Chart.Name }}"
+                  key: DB_NAME
+          ports:
+          - name: "{{ .Chart.Name }}"
+            containerPort: 8080
+          resources:
+{{ toYaml .Values.resources | indent 12 }}

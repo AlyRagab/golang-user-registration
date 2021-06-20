@@ -1,0 +1,51 @@
+image:
+  tag: latest
+  repository: alyragab/user_api
+  imagePullPolicy: Always
+
+service:
+  name: http
+  port: 8080
+  targetPort: 8080
+  type: ClusterIP
+
+
+replicas: 2
+
+rollingUpdate:
+  maxUnavailable: 25%
+  maxSurge: 25%
+
+resources:
+  requests:
+    cpu: 150m
+    memory: 250Mi
+  limits:
+    memory: 500Mi
+
+livenessProbe:
+  enabled: true
+  port: 8080
+  failureThreshold: 5
+  initialDelaySeconds: 5
+  periodSeconds: 15
+  timeoutSeconds: 3
+
+readinessProbe:
+  enabled: true
+  httpGet:
+    path: /healthz
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 5
+
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  resource:
+    name: cpu
+    target:
+      averageUtilization: 80

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Chart.Name }}"
+  labels:
+    app: "{{ .Chart.Name }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+data:
+  DB_HOST: postgres-postgresql.default.svc.cluster.local
+  DB_USER: admin
+  DB_PASSWORD: FakePassword
+  DB_NAME: user_api
