@@ -7,5 +7,5 @@ FROM alpine:3.14.0
 WORKDIR /bin
 COPY --from=builder /go/src .
 USER nobody
-EXPOSE 8080
+EXPOSE 9090
 CMD ["user_api"]
